@@ -1,0 +1,21 @@
+{
+  "name": "baidubce-editor",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "repository": "git@github.com:SecretCastle/baidubos-editor.git",
+  "author": "SecretCastle <chenfangzhong@hotmail.com>",
+  "dependencies": {
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "braft-editor": "^1.8.0",
+    "draft-js": "^0.10.5",
+    "parcel-bundler": "^1.6.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "scripts": {
+    "start": "parcel index.html -p 8080"
+  }
+}
