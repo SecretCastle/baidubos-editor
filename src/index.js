@@ -1,46 +1,23 @@
-import React from 'react';
+import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
-// 引入编辑器以及编辑器样式
-import BraftEditor from 'braft-editor'
-import 'braft-editor/dist/braft.css'
-
-class Demo extends React.Component {
-
-  render () {
-
-    const editorProps = {
-      height: 500,
-      contentFormat: 'html',
-      initialContent: '<p>Hello World!</p>',
-      onChange: this.handleChange,
-      onRawChange: this.handleRawChange
-    }
-
-    return (
-      <div className="demo">
-        <BraftEditor {...editorProps}/>
-      </div>
-    )
-
-  }
-
-  handleChange = (content) => {
-    console.log(content)
-  }
-
-  handleRawChange = (rawContent) => {
-    console.log(rawContent)
-  }
-
-}
+import Editor from './editor';
 
 const App = () => {
-    return (
-        <Demo />
-    )
+	return(
+		<div
+			style={{
+				width: 1200,
+				height: 800,
+				margin: 'auto',
+				border: '1px solid #eee'
+			}}
+		>
+			<Editor />
+		</div>
+	)
 }
 
 ReactDOM.render(
-    <Demo />,
-    document.getElementById('app')
-)
+	<App />,
+	document.getElementById('app')
+);
