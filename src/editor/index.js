@@ -15,7 +15,6 @@ class MyEditor extends Component {
     }
 
     uploadFn = (param) => {
-        console.log(param);
         UploadFn({
             baseURL: 'https://cnapitest.fogcloud.io',
             url: '/get_bos_sign/?fog_token=ut 16094aae6bf09f16f6a1617b5869f0a0078f170a',
@@ -38,6 +37,10 @@ class MyEditor extends Component {
         console.log('cancel', param);
     }
 
+    fileUpload = (e) => {
+        console.log(e.target.files);
+    }
+
     render () {
         const editorProps = {
             height: 500,
@@ -56,6 +59,7 @@ class MyEditor extends Component {
         return (
             <div className="demo">
               <BraftEditor {...editorProps}/>
+              <input type='file' accept="image/png" onChange={this.fileUpload}/>
             </div>
         )
     }

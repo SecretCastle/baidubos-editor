@@ -1,5 +1,6 @@
 import axios from 'axios';
 import moment from 'moment';
+import  sdk from 'bce-sdk-js';
 
 const axiosInstance = (url) => {
     const instance = axios.create({
@@ -15,7 +16,6 @@ const inerTools = {
         return date;
     },
     path_compile(path, file) {
-        console.log(encodeURIComponent('/v1' + path + file.file.name));
         return '/v1' + path + file.file.name;
     }
 }
@@ -80,14 +80,45 @@ const reqMiddleWare = (instance) => {
 //         method: 'POST',
 //         headers: {
 //             "Authorization": data.signature,
-//             "Date": new Date(),
-//             "Content-Length": param.file.file.size,
 //             "Content-Type": "text/plain"
 //         } 
 //     });
 //     console.log(response);
 //     // return data;
 // }
+
+const readBlobAsDataURL = (blob, callback) => {
+    var a = new FileReader();
+    a.onload = function(e) {callback(e.target.result);};
+    a.readAsDataURL(blob);
+}
+
+const UploadObject = async (data, file) => {
+    const fd = new FormData()
+    let options = {
+        "Authorization": "",
+        "Content-Type": "",
+        "Content-Length": "",
+        "HOST": "",
+        "x-bce-date": "",
+        "Date": ""
+    }
+    const client = new sdk.BosClient({
+        endpoint: 'https://fog-pub-cfz.gz.bcebos.com'
+    });
+    const defered = sdk.Q.defer();
+    client.createSignature = () => {
+        defered.resolve(data.signature, data.xbceDate);
+        return defered.promise;
+    }
+    client.putObjectFromBlob('fog-pub-cfz', 'cfz-test.jpeg', file.file)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+}
 
 export default async function uploadFn (param){
     const instance = axiosInstance(param.baseURL);
@@ -97,7 +128,8 @@ export default async function uploadFn (param){
         url: param.url,
         data: param.data
     });
-    // const uploadStatus = await UploadTOBos(data.data, param.data);
+    // const uploadStatus = await UploadObject(data.data, param.data);
+    const datas = await UploadObject(data.data, param.data.file);
     return data;
 }
 
