@@ -9,3 +9,11 @@
 明日： 
 
 尝试链接BOS，上传
+
+2018-03-22 18:12:24
+
+bos 上传走通
+
+明日：
+
+BosClient.putObjectFromBlob(bucket, object, <blob>) 中的blob类型，需要确定下
