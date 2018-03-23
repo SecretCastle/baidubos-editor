@@ -24,9 +24,9 @@ class MyEditor extends Component {
             }
         })
         .then(res => {
-            console.log(res);
+            // console.log(res);
         })
-        console.log('upload', param);
+        // console.log('upload', param);
         /**
          * 上传部分，开始了
          */

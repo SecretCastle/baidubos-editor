@@ -89,35 +89,72 @@ const reqMiddleWare = (instance) => {
 
 const readBlobAsDataURL = (blob, callback) => {
     var a = new FileReader();
-    a.onload = function(e) {callback(e.target.result);};
+    a.onload = function(e) {
+        callback(a.result);
+    };
     a.readAsDataURL(blob);
 }
 
 const UploadObject = async (data, file) => {
-    const fd = new FormData()
-    let options = {
-        "Authorization": "",
-        "Content-Type": "",
-        "Content-Length": "",
-        "HOST": "",
-        "x-bce-date": "",
-        "Date": ""
-    }
     const client = new sdk.BosClient({
-        endpoint: 'https://fog-pub-cfz.gz.bcebos.com'
+        endpoint: 'https://fog-pub-cfz.gz.bcebos.com',
+        // credentials: {
+        //     ak: 'fba8a9c577a443ab80d1f7111ea97ea3',
+        //     sk: '3181d962dff94ebd91a30035db68736a'
+        // },
     });
     const defered = sdk.Q.defer();
     client.createSignature = () => {
         defered.resolve(data.signature, data.xbceDate);
         return defered.promise;
     }
-    client.putObjectFromBlob('fog-pub-cfz', 'cfz-test.jpeg', file.file)
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => {
-            console.log(err);
-        })
+    const key = file.file.name;
+    const blob = file.file;
+    const ext = key.split(/\./g).pop();
+    let mimeType = sdk.MimeType.guess(ext);
+
+    const opt = {
+        'Content-Type': mimeType + '; charset=UTF-8'
+    };
+
+    readBlobAsDataURL(file.file , (response) => {
+        // console.log(response.toString('base64'));
+        client.putObjectFromBlob('fog-pub-cfz', key, response.toString('base64'), opt)
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    });
+    
+
+
+    // const bucket = 'fog-pub-cfz';
+    // const key = file.file.name;
+    // const blob = file.file;
+    // const ext = key.split(/\./g).pop();
+    // let mimeType = sdk.MimeType.guess(ext);
+    // const opt = {
+    //     "content-type": mimeType + '; charset=UTF-8',
+    //     "content-length": file.file.size,
+    //     // "authorization": data.signature,
+    //     // "Host": "https://fog-pub-cfz.gz.bcebos.com",
+    //     // "x-bce-date": data.xbceDate
+    // }
+    // const config = {
+    //     endpoint: 'https://fog-pub-cfz.gz.bcebos.com',
+    //     credentials: {
+    //         ak: 'fba8a9c577a443ab80d1f7111ea97ea3',
+    //         sk: '3181d962dff94ebd91a30035db68736a'
+    //     }
+    // }
+    // const client = new sdk.BosClient(config);
+    // console.log(bucket, key, blob, opt);
+
+    // var dataUrl = new Buffer('hello world').toString('base64');
+    // const result = client.putObjectFromDataUrl(bucket, 'test.txt', dataUrl, opt);
+    // return result;
 }
 
 export default async function uploadFn (param){
@@ -130,7 +167,8 @@ export default async function uploadFn (param){
     });
     // const uploadStatus = await UploadObject(data.data, param.data);
     const datas = await UploadObject(data.data, param.data.file);
-    return data;
+    console.log(datas);
+    // return data; 
 }
 
 
