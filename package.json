@@ -11,6 +11,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "baidubce-sdk": "^0.0.23",
     "bce-sdk-js": "^0.2.9",
     "braft-editor": "^1.8.0",
     "draft-js": "^0.10.5",

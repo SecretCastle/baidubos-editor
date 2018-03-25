@@ -15,15 +15,7 @@ class MyEditor extends Component {
     }
 
     uploadFn = (param) => {
-        UploadFn({
-            baseURL: 'https://cnapitest.fogcloud.io',
-            url: '/get_bos_sign/?fog_token=ut 16094aae6bf09f16f6a1617b5869f0a0078f170a',
-            data: {
-                file: param,
-                path: '/fog-pub-cfz/'
-            }
-        })
-        .then(res => {
+        UploadFn(param).then(res => {
             // console.log(res);
         })
         // console.log('upload', param);
