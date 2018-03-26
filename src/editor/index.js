@@ -15,14 +15,20 @@ class MyEditor extends Component {
     }
 
     uploadFn = (param) => {
-        UploadFn(param).then(res => {
-            // console.log(res);
+        UploadFn({
+            baseURL: 'https://cnapitest.fogcloud.io',
+            url: '/get_bos_sign/?fog_token=ut 16094aae6bf09f16f6a1617b5869f0a0078f170a',
+            data: {
+                file: param,
+                path: 'fog-pub-cfz'
+            }
         })
-        // console.log('upload', param);
-        /**
-         * 上传部分，开始了
-         */
-
+        .then(res => {
+            console.log(res);
+            param.success({
+                url: res 
+            })
+        })
     }
     
     removeConfirmFn = (param) => {
@@ -51,7 +57,6 @@ class MyEditor extends Component {
         return (
             <div className="demo">
               <BraftEditor {...editorProps}/>
-              <input type='file' accept="image/png" onChange={this.fileUpload}/>
             </div>
         )
     }

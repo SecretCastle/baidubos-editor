@@ -54,7 +54,7 @@ $('#upload').on('change', function (evt) {
     });
     promise.then(function (res) {
             // 上传成功
-            console.log(res);
+            console.log(res, url);
         })
         .catch(function (err) {
             // 上传失败

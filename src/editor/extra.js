@@ -1,68 +1,96 @@
+import axios from 'axios';
+import moment from 'moment';
 import sdk from 'baidubce-sdk/baidubce-sdk.bundle';
 
-var endpoint = 'https://fog-pub-cfz.gz.bcebos.com';
-var bucket = 'fog-pub-cfz';
-var tokenUrl = 'https://cnapitest.fogcloud.io/get_bos_sign/'
-var client = new sdk.BosClient({
-    endpoint
-});
+const BUCKET = 'fog-pub-cfz';
 
-client.createSignature = function(_, httpMethod, path, params, headers) {
-    var deferred = sdk.Q.defer();
-    $.ajax({
-        url: tokenUrl,
-        dataType: 'json',
+const axiosInstance = (url) => {
+    const instance = axios.create({
+        baseURL: url,
+        timeout: 10000,
+    });
+    return instance;
+}
+
+const inerTools = {
+    create_time_zone() {
+        const date = new Date().toISOString().split('.')[0] + "Z";
+        return date;
+    },
+    path_compile(path, file) {
+        return '/v1/' + path + '/' + file.file.name;
+    }
+}
+
+/**
+ * 拦截请求，并拼装成所需的
+ * @param {*} instance 
+ * 
+ * param : {
+ *    bos_bucket: "",
+ *    bos_endpoint: "",
+ *    uptoken_url: "",
+ *    file: ""
+ * } 
+ * 
+ * 请求所需参数
+ *  token: 16094aae6bf09f16f6a1617b5869f0a0078f170a
+    httpMethod: PUT
+    path: "/v1/" + 上传的文件路径
+    headers: {
+      "x-bce-date": "",
+      "Content-Type": "",
+      "Host": "",
+      "Content-Length": ""
+    }
+ * 
+ */
+
+const UploadObject = async (data, file, path) => {
+    const client = new sdk.BosClient({
+        endpoint: 'https://fog-pub-cfz.gz.bcebos.com',
+    });
+    const defered = sdk.Q.defer();
+    const defereded = sdk.Q.defer();
+    client.createSignature = () => {
+        defered.resolve(data.signature, data.xbceDate);
+        return defered.promise;
+    }
+    const key = file.file.name;
+    const blob = file.file;
+    const ext = key.split(/\./g).pop();
+    let mimeType = sdk.MimeType.guess(ext);
+
+    const opt = {
+        'Content-Type': mimeType + '; charset=UTF-8'
+    };
+    client.putObjectFromBlob(BUCKET, key, blob, opt)
+        .then(res => {
+            const url = `https://fog-pub-cfz.gz.bcebos.com/${path}/${key}`;
+            defereded.resolve(url);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    return defereded.promise;
+}
+
+export default async function uploadFn (param){
+    const instance = axiosInstance(param.baseURL);
+    const data =  await instance({
         method: 'get',
-        data: {
-            fog_token: 'ut 16094aae6bf09f16f6a1617b5869f0a0078f170a',
-            httpMethod: httpMethod,
-            path: path,
-            params: JSON.stringify(params || {}),
-            headers: JSON.stringify(headers || {})
-        },
-        success: function (payload) {
-            if (payload.statusCode === 200 && payload.signature) {
-                deferred.resolve(payload.signature, payload.xbceDate);
-            }
-            else {
-                deferred.reject(new Error('createSignature failed, statusCode = ' + payload.statusCode));
+        url: param.url,
+        params: {
+            "httpMethod": "PUT",
+            "path": inerTools.path_compile(param.data.path, param.data.file),
+            "headers": {
+                "x-bce-date": inerTools.create_time_zone(),
+                "Content-Type": `${param.data.file.file.type}; charset=UTF-8`,
+                "Host": "fog-pub-cfz.gz.bcebos.com",
+                "Content-Length": param.data.file.file.size
             }
         }
     });
-    return deferred.promise;
+    const datas = await UploadObject(data.data, param.data.file, param.data.path);
+    return datas; 
 }
-
-export default function UploadFn (params) {
-    console.log(params);
-    var file = params.file;
-    var key = file.name;
-    var blob = file;
-    var id = +new Date();
-    var deferred = sdk.Q.defer();
-    var ext = key.split(/\./g).pop();
-    var mimeType = sdk.MimeType.guess(ext);
-    if (/^text\//.test(mimeType)) {
-        mimeType += '; charset=UTF-8';
-    }
-    var options = {
-        'Content-Type': mimeType
-    };
-
-    // 以下逻辑与基本示例中的相同
-    var promise = client.putObjectFromBlob(bucket, key, blob, options);
-    client.on('progress', function (evt) {
-        // 上传中
-        console.log(evt);
-    });
-    promise.then(function (res) {
-            // 上传成功
-            console.log(res);
-            deferred.resolve(res);
-        })
-        .catch(function (err) {
-            // 上传失败
-            console.log(err);
-            deferred.reject(res);
-        });
-    return deferred.promise;
-};

@@ -82,7 +82,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],4:[function(require,module,exports) {
+},{}],3:[function(require,module,exports) {
 var global = (1,eval)("this");
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -7998,7 +7998,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }).call(this, e("buffer").Buffer);
     }, { buffer: 179, stream: 172, util: 176 }] }, {}, [1])(1);
 });
-},{"indexof":6}],12:[function(require,module,exports) {
+},{"indexof":6}],2:[function(require,module,exports) {
 'use strict';
 
 var _baidubceSdkBundle = require('./src/bower_components/bce-sdk-js/baidubce-sdk.bundle.min');
@@ -8060,13 +8060,13 @@ $('#upload').on('change', function (evt) {
     });
     promise.then(function (res) {
         // 上传成功
-        console.log(res);
+        console.log(res, url);
     }).catch(function (err) {
         // 上传失败
         console.log(err);
     });
 });
-},{"./src/bower_components/bce-sdk-js/baidubce-sdk.bundle.min":4}],230:[function(require,module,exports) {
+},{"./src/bower_components/bce-sdk-js/baidubce-sdk.bundle.min":3}],12:[function(require,module,exports) {
 
 var global = (1, eval)('this');
 var OldModule = module.bundle.Module;
@@ -8088,7 +8088,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58557' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52561' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -8189,5 +8189,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.require, id);
   });
 }
-},{}]},{},[230,12])
+},{}]},{},[12,2])
 //# sourceMappingURL=/dist/da88ebd5beeb84ee4e85af8621c2674b.map
